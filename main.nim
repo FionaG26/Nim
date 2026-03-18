@@ -1,4 +1,4 @@
-import todo_manager, strutils, times
+import todo_manager, times, strutils
 
 const FILE_NAME = "tasks.txt"
 
