@@ -1,10 +1,9 @@
 import jester, json, times, strutils
-import os, task, todo_manager
+import task, todo_manager, os
 
 const FILE_NAME = "tasks.txt"
 loadTasks(FILE_NAME)
 
-# Convert Task to JSON
 proc taskToJson(t: Task, id: int): JsonNode =
   %*{
     "id": id,
@@ -15,14 +14,14 @@ proc taskToJson(t: Task, id: int): JsonNode =
     "deadline": t.deadline.format("yyyy-MM-dd")
   }*
 
-# List all tasks
+# GET all tasks
 get "/tasks":
   var arr = newJArray()
   for i, t in tasks:
     arr.add(taskToJson(t, i))
   resp arr
 
-# Add new task
+# POST new task
 post "/tasks":
   let data = parseJson(request.body)
   let desc = data["description"].getStr
@@ -32,7 +31,7 @@ post "/tasks":
   saveTasks(FILE_NAME)
   resp Http200, %*{"status":"Task added"}*
 
-# Complete a task
+# PUT complete task
 put "/tasks/:id/complete":
   let id = param("id").parseInt
   if id < 0 or id >= tasks.len:
@@ -42,7 +41,7 @@ put "/tasks/:id/complete":
     saveTasks(FILE_NAME)
     resp %*{"status":"Task completed"}*
 
-# Delete a task
+# DELETE a task
 delete "/tasks/:id":
   let id = param("id").parseInt
   if id < 0 or id >= tasks.len:
@@ -52,7 +51,6 @@ delete "/tasks/:id":
     saveTasks(FILE_NAME)
     resp %*{"status":"Task removed"}*
 
-# Start server
 routes:
   setPort(5000)
   echo "REST API running on http://localhost:5000"
