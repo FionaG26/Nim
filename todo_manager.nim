@@ -1,14 +1,8 @@
-import task, strutils, os, times, algorithm
+import task, os, times, algorithm, strutils
 
 var tasks*: seq[Task] = @[]
 
-# ANSI colors
-const
-  GREEN = "\e[32m"
-  YELLOW = "\e[33m"
-  RED = "\e[31m"
-  RESET = "\e[0m"
-
+# Add task
 proc addTask*(desc: string, priority: int, deadline: DateTime) =
   let task = Task(
     description: desc,
@@ -18,46 +12,30 @@ proc addTask*(desc: string, priority: int, deadline: DateTime) =
     deadline: deadline
   )
   tasks.add(task)
-  echo GREEN, "Task added: ", desc, RESET
 
-# Sort by priority (higher first)
+# Complete task
+proc completeTask*(index: int) =
+  if index >= 0 and index < tasks.len:
+    tasks[index].completed = true
+
+# Remove task
+proc removeTask*(index: int) =
+  if index >= 0 and index < tasks.len:
+    tasks.delete(index)
+
+# Sort by priority
 proc sortTasks*() =
   tasks.sort(proc(a, b: Task): int = cmp(b.priority, a.priority))
 
+# List tasks
 proc listTasks*() =
-  if tasks.len == 0:
-    echo YELLOW, "No tasks available.", RESET
-  else:
-    sortTasks()
-    for i, task in tasks:
-      let status = if task.completed: "[✔]" else: "[ ]"
+  sortTasks()
+  for i, t in tasks:
+    let status = if t.completed: "[✔]" else: "[ ]"
+    echo i, ": ", status, " ", t.description,
+         " (Priority: ", t.priority, ") Due: ", t.deadline.format("yyyy-MM-dd")
 
-      let color =
-        if task.completed: GREEN
-        elif task.deadline < now(): RED
-        else: YELLOW
-
-      echo color, i, ": ", status, " ",
-           task.description,
-           " (Priority: ", task.priority, ")",
-           " Due: ", task.deadline.format("yyyy-MM-dd"),
-           RESET
-
-proc completeTask*(index: int) =
-  if index < 0 or index >= tasks.len:
-    echo RED, "Invalid task number.", RESET
-  else:
-    tasks[index].completed = true
-    echo GREEN, "Task marked as completed.", RESET
-
-proc removeTask*(index: int) =
-  if index < 0 or index >= tasks.len:
-    echo RED, "Invalid task number.", RESET
-  else:
-    tasks.delete(index)
-    echo GREEN, "Task removed.", RESET
-
-# Save tasks
+# Save tasks to file
 proc saveTasks*(filename: string) =
   var lines: seq[string] = @[]
   for task in tasks:
@@ -69,11 +47,10 @@ proc saveTasks*(filename: string) =
     lines.add(line)
   writeFile(filename, lines.join("\n"))
 
-# Load tasks
+# Load tasks from file
 proc loadTasks*(filename: string) =
   if not fileExists(filename):
     return
-
   let content = readFile(filename)
   for line in content.splitLines():
     if line.len == 0: continue
