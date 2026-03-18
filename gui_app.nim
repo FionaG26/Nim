@@ -9,7 +9,7 @@ proc refreshList(lst: ListBox) =
   for i, t in tasks:
     let status = if t.completed: "[✔]" else: "[ ]"
     lst.addItem($i & ": " & status & " " & t.description &
-                " (Priority: " & $t.priority & ") Due: " & t.deadline.fromTime().format("yyyy-MM-dd"))
+                " (Priority: " & $t.priority & ") Due: " & t.deadline.format("yyyy-MM-dd"))
 
 let window = newWindow("Nim Todo List", 500, 400)
 let taskList = newListBox(window, 10, 10, 480, 250)
@@ -24,9 +24,8 @@ addBtn.onClick = proc() =
   try:
     let desc = descEntry.text
     let pr = parseInt(prEntry.text)
-    let dt = parse(dlEntry.text, "yyyy-MM-dd")
-    let dl = dt.toTime()
-    addTask(desc, pr, dl)
+    let deadline = parse(dlEntry.text, "yyyy-MM-dd")
+    addTask(desc, pr, deadline)
     saveTasks(FILE_NAME)
     refreshList(taskList)
   except:
@@ -34,16 +33,18 @@ addBtn.onClick = proc() =
 
 let completeBtn = newButton(window, "Complete Task", 10, 310, 150, 25)
 completeBtn.onClick = proc() =
-  let idx = parseInt(taskList.selectedItem.split(":")[0])
-  completeTask(idx)
-  saveTasks(FILE_NAME)
-  refreshList(taskList)
+  if taskList.selectedItem.len > 0:
+    let idx = parseInt(taskList.selectedItem.split(":")[0])
+    completeTask(idx)
+    saveTasks(FILE_NAME)
+    refreshList(taskList)
 
 let removeBtn = newButton(window, "Remove Task", 170, 310, 150, 25)
 removeBtn.onClick = proc() =
-  let idx = parseInt(taskList.selectedItem.split(":")[0])
-  removeTask(idx)
-  saveTasks(FILE_NAME)
-  refreshList(taskList)
+  if taskList.selectedItem.len > 0:
+    let idx = parseInt(taskList.selectedItem.split(":")[0])
+    removeTask(idx)
+    saveTasks(FILE_NAME)
+    refreshList(taskList)
 
 window.show()
