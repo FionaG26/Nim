@@ -1,4 +1,4 @@
-import todo_manager, strutils
+import todo_manager, strutils, times
 
 const FILE_NAME = "tasks.txt"
 
@@ -23,33 +23,33 @@ proc main() =
       let desc = readLine(stdin)
 
       stdout.write("Enter priority (1-5): ")
+      let pr = parseInt(readLine(stdin))
+
+      stdout.write("Enter deadline (YYYY-MM-DD): ")
+      let dateStr = readLine(stdin)
+
       try:
-        let pr = parseInt(readLine(stdin))
-        addTask(desc, pr)
+        let deadline = parse(dateStr, "yyyy-MM-dd")
+        addTask(desc, pr, deadline)
       except:
-        echo "Invalid priority."
+        echo "Invalid date format."
 
     of "2":
       listTasks()
 
     of "3":
       stdout.write("Enter task number: ")
-      try:
-        let idx = parseInt(readLine(stdin))
-        completeTask(idx)
-      except:
-        echo "Invalid input."
+      let idx = parseInt(readLine(stdin))
+      completeTask(idx)
 
     of "4":
       stdout.write("Enter task number: ")
-      try:
-        let idx = parseInt(readLine(stdin))
-        removeTask(idx)
-      except:
-        echo "Invalid input."
+      let idx = parseInt(readLine(stdin))
+      removeTask(idx)
 
     of "5":
       saveTasks(FILE_NAME)
+      echo "Tasks saved."
 
     of "6":
       saveTasks(FILE_NAME)
