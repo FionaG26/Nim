@@ -31,6 +31,7 @@ proc main() =
       try:
         let deadline = parse(dateStr, "yyyy-MM-dd")
         addTask(desc, pr, deadline)
+        echo "Task added!"
       except:
         echo "Invalid date format."
 
