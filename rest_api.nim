@@ -1,5 +1,5 @@
-import jester, json, times, strutils
-import task, todo_manager, os
+import jester, json, times, strutils, os
+import task, todo_manager
 
 const FILE_NAME = "tasks.txt"
 loadTasks(FILE_NAME)
@@ -10,8 +10,8 @@ proc taskToJson(t: Task, id: int): JsonNode =
     "description": t.description,
     "priority": t.priority,
     "completed": t.completed,
-    "createdAt": t.createdAt.format("yyyy-MM-dd"),
-    "deadline": t.deadline.format("yyyy-MM-dd")
+    "createdAt": t.createdAt.fromTime().format("yyyy-MM-dd"),
+    "deadline": t.deadline.fromTime().format("yyyy-MM-dd")
   }*
 
 # GET all tasks
@@ -26,7 +26,8 @@ post "/tasks":
   let data = parseJson(request.body)
   let desc = data["description"].getStr
   let pr = data["priority"].getInt
-  let deadline = parse(data["deadline"].getStr, "yyyy-MM-dd")
+  let dt = parse(data["deadline"].getStr, "yyyy-MM-dd")
+  let deadline = dt.toTime()
   addTask(desc, pr, deadline)
   saveTasks(FILE_NAME)
   resp Http200, %*{"status":"Task added"}*
