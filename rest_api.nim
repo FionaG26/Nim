@@ -52,7 +52,7 @@ delete "/tasks/:id":
     saveTasks(FILE_NAME)
     resp %*{"status":"Task removed"}*
 
-# Start the server
+# Start server
 routes:
   setPort(5000)
   echo "REST API running on http://localhost:5000"
