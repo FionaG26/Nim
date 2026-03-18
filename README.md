@@ -1,146 +1,215 @@
-# 📝 Nim Command-Line Todo List Manager
+# 📝 Nim Todo List Project
 
-A simple, modular command-line Todo List application built in **Nim**.
-This project demonstrates core Nim concepts including data structures, procedures, modules, error handling, and file I/O.
+A **cross-platform Todo List application** built in **Nim**.
+This project demonstrates Nim’s capabilities across multiple interfaces:
 
----
+* **Command-Line Interface (CLI)**
+* **REST API** using Jester
+* **Graphical User Interface (GUI)** using Nimx
 
-## 🚀 Features
-
-* Add new tasks with priority levels
-* List all tasks with completion status
-* Mark tasks as completed
-* Remove tasks
-* Persistent storage (save/load tasks from file)
-* Modular code structure
+It includes **persistent storage**, **task deadlines**, **priority sorting**, and **modular code design**.
 
 ---
 
 ## 📁 Project Structure
 
-```
-.
-├── main.nim           # Entry point (CLI interface)
+```text
+nim-todo-project/
+│
+├── main.nim           # CLI interface
+├── rest_api.nim       # REST API server (Jester)
+├── gui_app.nim        # GUI application (Nimx)
 ├── todo_manager.nim   # Core logic and task operations
-├── task.nim           # Task data model
-└── tasks.txt          # Stored tasks (auto-created)
+├── task.nim           # Task object definition
+├── tasks.txt          # Persisted tasks (auto-created)
+└── README.md          # Project documentation
 ```
+
+---
+
+## 🧩 Features
+
+* Add tasks with description, priority, and deadline
+* List all tasks with completion status
+* Mark tasks as completed
+* Remove tasks
+* Tasks saved to `tasks.txt` for persistence
+* CLI supports colored output for readability
+* Automatic sorting by task priority
+* REST API endpoints for web or mobile integration
+* GUI application with live task list and interactive buttons
+* Modular design for easy extension
 
 ---
 
 ## 🧠 Concepts Covered
 
-This project is useful for learning:
+This project is perfect for learning Nim fundamentals and advanced topics:
 
 * Nim syntax and indentation
-* Custom object types
+* Custom object types (`Task`)
 * Sequences (dynamic arrays)
-* Procedures (functions)
-* Modules and imports
-* Error handling with `try/except`
-* File I/O (read/write persistence)
+* Procedures, modules, and imports
+* Error handling (`try/except`)
+* File I/O for persistence
+* Sorting and filtering data
+* REST API with Jester
+* GUI development with Nimx
+* Time handling with deadlines and timestamps
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Installation Instructions (Linux)
 
 ### 1. Install Nim
 
-Download Nim from the official site:
-
-👉 [https://nim-lang.org/install.html](https://nim-lang.org/install.html)
-
-Verify installation:
-
 ```bash
+curl https://nim-lang.org/choosenim/init.sh -sSf | sh
 nim -v
 ```
 
 ---
 
-## ▶️ Running the Application
+### 2. Clone the Project
 
-Compile and run:
+```bash
+git clone https://github.com/yourusername/nim-todo-project.git
+cd nim-todo-project
+```
+
+---
+
+### 3. Install Dependencies
+
+**REST API**:
+
+```bash
+nimble install jester
+```
+
+**GUI Version**:
+
+```bash
+nimble install nimx
+# Install required system libraries on Linux
+sudo apt install libsdl2-dev libcairo2-dev
+```
+
+---
+
+## ▶️ Running the Project
+
+### CLI Version
 
 ```bash
 nim c -r main.nim
 ```
 
+* Navigate the menu to add, list, complete, remove, and save tasks.
+
 ---
 
-## 💻 Usage
+### REST API Version
 
-Once running, you’ll see a menu:
-
-```
-==== TODO LIST ====
-1. Add Task
-2. List Tasks
-3. Complete Task
-4. Remove Task
-5. Save Tasks
-6. Exit
+```bash
+nimble c -r rest_api.nim
 ```
 
-Follow prompts to interact with your todo list.
+* Runs on **[http://localhost:5000](http://localhost:5000)**
+* Example requests with `curl`:
+
+```bash
+# List tasks
+curl http://localhost:5000/tasks
+
+# Add task
+curl -X POST http://localhost:5000/tasks \
+     -H "Content-Type: application/json" \
+     -d '{"description":"Buy groceries","priority":2,"deadline":"2026-03-20"}'
+
+# Complete task
+curl -X PUT http://localhost:5000/tasks/0/complete
+
+# Delete task
+curl -X DELETE http://localhost:5000/tasks/0
+```
+
+---
+
+### GUI Version
+
+```bash
+nimble c -r gui_app.nim
+```
+
+* Opens a GUI window with:
+
+  * Task list display
+  * Entry fields for description, priority, deadline
+  * Buttons to Add, Complete, Remove tasks
 
 ---
 
 ## 💾 Data Persistence
 
-* Tasks are saved to `tasks.txt`
-* Data format:
+* All tasks are saved in `tasks.txt` automatically.
+* File format:
 
 ```
-description|priority|completed
+description|priority|completed|createdAt|deadline
 ```
 
 Example:
 
 ```
-Finish assignment|2|false
-Buy groceries|1|true
+Finish Nim README|2|false|1678534800|1678621200
+Buy groceries|1|true|1678538400|1678624800
 ```
 
----
-
-## 🧪 Example Workflow
-
-```text
-> Add Task
-> "Write Nim README"
-> Priority: 2
-
-> List Tasks
-0: [ ] Write Nim README (Priority: 2)
-
-> Complete Task
-> 0
-
-0: [✔] Write Nim README (Priority: 2)
-```
+> All interfaces (CLI, GUI, REST API) share the same file.
 
 ---
 
 ## 🛠️ Possible Improvements
 
-* Add colored CLI output
-* Sort tasks by priority
-* Add deadlines or timestamps
-* Build a GUI version
-* Convert into a REST API
+* 🎨 **Colored CLI output** (highlight completed, pending, overdue tasks)
+* 🔢 **Sort tasks by priority**
+* ⏱️ **Add deadlines and timestamps**
+* 🖥️ **GUI enhancements**: buttons, calendar picker, drag-and-drop
+* 🌐 **REST API improvements**: authentication, JSON validation, web frontend
+* ⚡ **Cross-platform packaging**: Linux, macOS, Windows executables
+* 📦 **Integration with databases** for larger-scale task storage
 
 ---
 
-## 📚 Why Nim?
+## 🔗 REST API Endpoints
 
-Nim combines:
+| Method | Endpoint              | Description            |
+| ------ | --------------------- | ---------------------- |
+| GET    | `/tasks`              | List all tasks         |
+| POST   | `/tasks`              | Add a new task         |
+| PUT    | `/tasks/:id/complete` | Mark task as completed |
+| DELETE | `/tasks/:id`          | Remove task            |
+
+---
+
+## 🖥️ GUI Layout
+
+* **ListBox**: displays tasks
+* **TextBox**: for task description, priority, deadline
+* **Buttons**: Add, Complete, Remove
+
+> GUI interacts directly with `tasks.txt` for persistence.
+
+---
+
+## 💻 Why Nim?
 
 * Python-like readability
 * C-level performance
-* Powerful metaprogramming
-
-This makes it great for both learning and building efficient applications.
+* Powerful compile-time features (macros, templates)
+* Multi-paradigm: imperative, functional, object-oriented
+* Ideal for learning **systems programming**, **scripting**, and **application development**
 
 ---
 
