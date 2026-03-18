@@ -34,7 +34,7 @@ proc listTasks*() =
   for i, t in tasks:
     let status = if t.completed: "[✔]" else: "[ ]"
     echo i, ": ", status, " ", t.description,
-         " (Priority: ", t.priority, ") Due: ", t.deadline.format("yyyy-MM-dd")
+         " (Priority: ", t.priority, ") Due: ", t.deadline.fromTime().format("yyyy-MM-dd")
 
 # Save tasks to file
 proc saveTasks*(filename: string) =
@@ -43,8 +43,8 @@ proc saveTasks*(filename: string) =
     let line = t.description & "|" &
                $t.priority & "|" &
                $t.completed & "|" &
-               $t.createdAt.toUnix & "|" &
-               $t.deadline.toUnix
+               $t.createdAt & "|" &
+               $t.deadline
     lines.add(line)
   writeFile(filename, lines.join("\n"))
 
@@ -60,7 +60,7 @@ proc loadTasks*(filename: string) =
         description: parts[0],
         priority: parseInt(parts[1]),
         completed: parseBool(parts[2]),
-        createdAt: fromUnix(parseInt(parts[3])),
-        deadline: fromUnix(parseInt(parts[4]))
+        createdAt: parseFloat(parts[3]),
+        deadline: parseFloat(parts[4])
       )
       tasks.add(t)
