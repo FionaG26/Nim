@@ -43,8 +43,8 @@ proc saveTasks*(filename: string) =
     let line = t.description & "|" &
                $t.priority & "|" &
                $t.completed & "|" &
-               $t.createdAt.toTime & "|" &   # convert DateTime -> Time (float)
-               $t.deadline.toTime
+               t.createdAt.format("yyyy-MM-dd") & "|" &
+               t.deadline.format("yyyy-MM-dd")
     lines.add(line)
   writeFile(filename, lines.join("\n"))
 
@@ -60,7 +60,7 @@ proc loadTasks*(filename: string) =
         description: parts[0],
         priority: parseInt(parts[1]),
         completed: parseBool(parts[2]),
-        createdAt: fromTime(parseFloat(parts[3])),  # convert Time -> DateTime
-        deadline: fromTime(parseFloat(parts[4]))
+        createdAt: parse(parts[3], "yyyy-MM-dd"),
+        deadline: parse(parts[4], "yyyy-MM-dd")
       )
       tasks.add(t)
