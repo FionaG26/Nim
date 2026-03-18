@@ -147,11 +147,3 @@ This makes it great for both learning and building efficient applications.
 ## 👩‍💻 Author
 
 Fiona Githaiga
-
----
-
-## 📄 License
-
-This project is open-source and available under the MIT License.
-* add **badges + visuals**
-* or make it sound more **personal/story-driven for your newsletter**
