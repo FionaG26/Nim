@@ -29,7 +29,8 @@ proc main() =
       let dateStr = readLine(stdin)
 
       try:
-        let deadline = parse(dateStr, "yyyy-MM-dd")
+        let dt = parse(dateStr, "yyyy-MM-dd")   # returns DateTime
+        let deadline = dt.toTime()              # convert to Time
         addTask(desc, pr, deadline)
         echo "Task added!"
       except:
