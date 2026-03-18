@@ -5,5 +5,5 @@ type
     description*: string
     priority*: int
     completed*: bool
-    createdAt*: DateTime
-    deadline*: DateTime
+    createdAt*: Time     
+    deadline*: Time
