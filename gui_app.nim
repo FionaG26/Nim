@@ -9,7 +9,7 @@ proc refreshList(lst: ListBox) =
   for i, t in tasks:
     let status = if t.completed: "[✔]" else: "[ ]"
     lst.addItem($i & ": " & status & " " & t.description &
-                " (Priority: " & $t.priority & ") Due: " & t.deadline.format("yyyy-MM-dd"))
+                " (Priority: " & $t.priority & ") Due: " & t.deadline.fromTime().format("yyyy-MM-dd"))
 
 let window = newWindow("Nim Todo List", 500, 400)
 let taskList = newListBox(window, 10, 10, 480, 250)
@@ -24,9 +24,9 @@ addBtn.onClick = proc() =
   try:
     let desc = descEntry.text
     let pr = parseInt(prEntry.text)
-    let dl = dlEntry.text
-    let deadline = parse(dl, "yyyy-MM-dd")
-    addTask(desc, pr, deadline)
+    let dt = parse(dlEntry.text, "yyyy-MM-dd")
+    let dl = dt.toTime()
+    addTask(desc, pr, dl)
     saveTasks(FILE_NAME)
     refreshList(taskList)
   except:
