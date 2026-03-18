@@ -29,8 +29,7 @@ proc main() =
       let dateStr = readLine(stdin)
 
       try:
-        let dt = parse(dateStr, "yyyy-MM-dd")   # returns DateTime
-        let deadline = dt.toTime()              # convert to Time
+        let deadline = parse(dateStr, "yyyy-MM-dd")
         addTask(desc, pr, deadline)
         echo "Task added!"
       except:
@@ -42,12 +41,20 @@ proc main() =
     of "3":
       stdout.write("Enter task number: ")
       let idx = parseInt(readLine(stdin))
-      completeTask(idx)
+      if idx >= 0 and idx < tasks.len:
+        completeTask(idx)
+        echo "Task completed."
+      else:
+        echo "Invalid task number."
 
     of "4":
       stdout.write("Enter task number: ")
       let idx = parseInt(readLine(stdin))
-      removeTask(idx)
+      if idx >= 0 and idx < tasks.len:
+        removeTask(idx)
+        echo "Task removed."
+      else:
+        echo "Invalid task number."
 
     of "5":
       saveTasks(FILE_NAME)
