@@ -1,19 +1,17 @@
-import nimx, todo_manager, times
+import nimx, todo_manager, times, strutils
 
 const FILE_NAME = "tasks.txt"
 loadTasks(FILE_NAME)
 
-# Helper to refresh task list in GUI
 proc refreshList(lst: ListBox) =
   lst.clear()
   sortTasks()
   for i, t in tasks:
     let status = if t.completed: "[✔]" else: "[ ]"
-    lst.addItem($i & ": " & status & " " & t.description & " (Priority: " & $t.priority & ") Due: " & t.deadline.format("yyyy-MM-dd"))
+    lst.addItem($i & ": " & status & " " & t.description &
+                " (Priority: " & $t.priority & ") Due: " & t.deadline.format("yyyy-MM-dd"))
 
-# GUI window
 let window = newWindow("Nim Todo List", 500, 400)
-
 let taskList = newListBox(window, 10, 10, 480, 250)
 refreshList(taskList)
 
@@ -26,7 +24,7 @@ addBtn.onClick = proc() =
   try:
     let desc = descEntry.text
     let pr = parseInt(prEntry.text)
-    let dl = parse(dlEntry.text)
+    let dl = dlEntry.text
     let deadline = parse(dl, "yyyy-MM-dd")
     addTask(desc, pr, deadline)
     saveTasks(FILE_NAME)
